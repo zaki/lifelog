@@ -122,6 +122,27 @@ window.onload = function() {
     });
   }
 
+  function drawAnnotations() {
+    for (var i in window.annotations) {
+      var annotation = window.annotations[i];
+
+      var days = daysSinceStart(annotation.date);
+      var pos  = coordForTime(days, 0, 600);
+
+      context.strokeStyle = "#3333ff";
+      context.fillStyle = "#3333ff";
+      context.lineWidth = 0.5;
+      context.globalAlpha = 0.5;
+      context.beginPath();
+      context.moveTo(pos[0] + 2, pos[1] + annotation.pos * 12);
+      context.lineTo(pos[0] + 2, 30);
+      context.stroke();
+      context.globalAlpha = 1.0;
+      context.font = "10px Helvetica";
+      context.fillText(annotation.text, pos[0] + 5, pos[1] + annotation.pos * 12);
+    }
+  }
+
   function drawCommits() {
     var x, y, i, j;
     var days, pos;
@@ -230,6 +251,18 @@ window.onload = function() {
     ];
     drawSummaries(summaries, 430, 10);
   }
+
+  function loadAnnotations() {
+    d3.csv("annotation-data.csv", function(posts) {
+      posts.forEach(function(post, index) {
+        post.index = index;
+        post.date  = new Date(post.date);
+      });
+      window.annotations = posts;
+
+      drawAnnotations();
+    });
+  }
   //}}}
 
   context.fillText("Loading commits...", 10, 10);
@@ -257,6 +290,8 @@ window.onload = function() {
     window.commitsPerDOW = commitsPerDOW;
     window.commitsPerHour = commitsPerHour;
     drawCommits();
+
+    loadAnnotations();
   });
   d3.csv("email-data.csv", function(emails) {
     emails.forEach(function(email, index) {
