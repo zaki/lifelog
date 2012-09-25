@@ -3,13 +3,61 @@
 <head>
   <meta charset="UTF-8">
   <title></title>
-  <script src="crossfilter.min.js"></script>
-  <script src="d3.v2.min.js"></script>
-  <script src="commits.js"></script>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <canvas id="canvas" width="12000" height="640">
+  <div id="menu">
+    <div class="pane">
+      <h2>Color by</h2>
+      <ul>
+        <li><input type="radio" name="color[]" value="company" checked />Company</li>
+        <li><input type="radio" name="color[]" value="language" />Language</li>
+        <li><input type="radio" name="color[]" value="project" />Project</li>
+      </ul>
+    </div>
+    <div class="pane wide">
+      <h2>Filter</h2>
+      <ul>
+        <li>
+          Company:
+          <select id="company-filter">
+            <option value="">All</option>
+            <option value="amu">AMU</option>
+            <option value="3di">3Di</option>
+            <option value="pikkle">Pikkle</option>
+            <option value="klab">Klab</option>
+            <option value="zaki">Personal</option>
+          </select>
+        </li>
+      </ul>
+    </div>
+    <button class="btn" id="refresh">Refresh</button>
+    <br />
+  </div>
+
+  <ul id="color-legend-commit" class="color-legend"></ul>
+  <canvas id="commit-canvas" width="12000" height="240">
     Your browser does not support the canvas tag.
   </canvas>
+
+  <ul id="color-legend-email" class="color-legend"></ul>
+  <canvas id="email-canvas" width="12000" height="240">
+    Your browser does not support the canvas tag.
+  </canvas>
+
+  <ul id="color-legend-social" class="color-legend"></ul>
+  <canvas id="social-canvas" width="12000" height="240">
+    Your browser does not support the canvas tag.
+  </canvas>
+
+  <ul id="color-legend-im" class="color-legend"></ul>
+  <canvas id="im-canvas" width="12000" height="240">
+    Your browser does not support the canvas tag.
+  </canvas>
+
+  <script src="crossfilter.min.js"></script>
+  <script src="d3.v2.min.js"></script>
+  <script src="drawing.js"></script>
+  <script src="commits.js"></script>
 </body>
 </html>
