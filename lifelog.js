@@ -9,7 +9,7 @@ window.onload = function() {
       window.commitsPerHour.all(),
     ], 100);
     chart.drawSummary(window.commitsPerLanguage.all(), 1084, 100, 35, function(x) {
-      var map = { "javascript": "js", "coffeescript": "coffee", "objective-c": "obj-c" }
+      var map = { "javascript": "js", "coffeescript": "coffee", "objective-c": "obj-c" };
       return((map[x.key] || x.key).toUpperCase());
     });
     chart.drawAnnotations();
@@ -53,7 +53,7 @@ window.onload = function() {
   }
   //{{{ - Data loading
   function loadAnnotations() {
-    d3.csv("http://rody.dev/data/holiday", function(posts) {
+    d3.csv("data/holiday-data.csv", function(posts) {
       posts.forEach(function(post, index) {
         post.index = index;
         post.date  = new Date(post.date);
@@ -73,7 +73,7 @@ window.onload = function() {
   }
 
   function loadData() {
-    d3.csv("http://rody.dev/data/commits", function(commits) {
+    d3.csv("data/commit-data.csv", function(commits) {
       commits.forEach(function(commit, index) {
         commit.index = index;
         commit.date  = new Date(commit.date);
@@ -99,7 +99,7 @@ window.onload = function() {
       window.commitsPerLanguage = commitsPerLanguage;
       drawCommits();
     });
-    d3.csv("http://rody.dev/data/emails", function(emails) {
+    d3.csv("data/email-data.csv", function(emails) {
       emails.forEach(function(email, index) {
         email.index = index;
         email.date  = new Date(email.date);
@@ -122,7 +122,7 @@ window.onload = function() {
       window.emailsPerHour = emailsPerHour;
       drawEmails();
     });
-    d3.csv("http://rody.dev/data/social", function(posts) {
+    d3.csv("data/social-data.csv", function(posts) {
       posts.forEach(function(post, index) {
         post.index = index;
         post.date  = new Date(post.date);
@@ -145,7 +145,7 @@ window.onload = function() {
       window.social = posts;
       drawSocial();
     });
-    d3.csv("http://rody.dev/data/im", function(posts) {
+    d3.csv("data/im-data.csv", function(posts) {
       posts.forEach(function(post, index) {
         post.index = index;
         post.date  = new Date(post.date);
@@ -175,7 +175,8 @@ window.onload = function() {
     var groups = null;
     var filter = null;
     var radios = document.getElementsByName("color[]");
-    for (var i in radios) {
+    var i;
+    for (i = 0; i < radios.length; i++) {
       if (radios[i].checked) {
         groups = radios[i].value;
       }
@@ -184,8 +185,9 @@ window.onload = function() {
     var company = companySelect.value;
 
     console.log(groups, company);
-    if (groups)
+    if (groups) {
       drawCommits(groups, {company: company} );
-  }
-}
+    }
+  };
+};
 
