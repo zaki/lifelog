@@ -22,14 +22,16 @@ var Chart = function(name, title) {
   this.canvas  = document.getElementById(name + "-canvas");
   this.context = this.canvas.getContext('2d');
 
+  this.position = 0;
+
   this.context.fillText("Loading...", 10, 10);
   this.colors  = [
     "#00f",
     "#f60",
     "#3f3",
-    "#aaa",
+    "#33e6d9",
+    "#555",
 
-    "#33E6D9",
     "#FFA600",
     "#A64B00",
     "#8CCCF2",
@@ -86,6 +88,7 @@ var Chart = function(name, title) {
     this.context.stokeStyle = "#ff0000";
     this.context.fillStyle  = "#000000";
     this.context.lineWidth = 0.1;
+    this.context.beginPath();
     for(i=0;i<24;i++) {
       this.hourLine(i);
     }
@@ -121,6 +124,55 @@ var Chart = function(name, title) {
     this.context.fillText(text, x, y);
   }
 
+  this.drawWeekends = function() {
+    var days = new Date("" + Settings.endYear + "-12-31").getTime();
+    var startDate = new Date("" + Settings.startYear + "-" + Settings.startMonth + "-01").getTime();
+    this.context.beginPath();
+    this.context.fillStyle = "#f00";
+    this.context.strokeStyle = "#f00";
+    for (var day = startDate; day < days; day+=8640000)
+    {
+      var d = new Date(day);
+      var dow = d.getDay();
+
+      if (dow == 0 || dow == 6) {
+        this.dayLine(d);
+      }
+    }
+    this.context.stroke();
+  }
+
+  this.drawWeekdays = function() {
+    var days = new Date("" + Settings.endYear + "-12-31").getTime();
+    var startDate = new Date("" + Settings.startYear + "-" + Settings.startMonth + "-01").getTime();
+    this.context.beginPath();
+    this.context.fillStyle = "#ccc";
+    this.context.strokeStyle = "#ccc";
+    this.context.lineWidth = 0.1;
+    for (var day = startDate; day < days; day+=8640000)
+    {
+      var d = new Date(day);
+      var dow = d.getDay();
+
+      if (dow != 0 && dow != 6) {
+        this.dayLine(d);
+      }
+    }
+    this.context.stroke();
+  }
+
+  this.drawHolidays = function() {
+    this.context.beginPath();
+    this.context.fillStyle = "#f00";
+    this.context.strokeStyle = "#f00";
+    this.context.lineWidth = 0.7;
+    var self = this;
+    window.holidays.forEach(function(holiday) {
+      self.dayLine(holiday.date);
+    });
+    this.context.stroke();
+  }
+
   this.drawSummary = function(values, x, factor, width, legend) {
     if (typeof(width) === "undefined") {
       width = 10;
@@ -152,9 +204,13 @@ var Chart = function(name, title) {
 
     this.clear();
 
+    this.context.globalAlpha = 1.0;
     this.drawHeader(this.title);
-    this.context.beginPath();
     this.drawGrid();
+
+    this.drawWeekends();
+    this.drawWeekdays();
+    this.drawHolidays();
 
     var lastGroup = "";
     var colorIndex = -1;
@@ -165,7 +221,6 @@ var Chart = function(name, title) {
     };
     var self = this;
 
-    self.context.globalAlpha = 0.5;
     values.sort(sorter).forEach(function(value) {
       var days = self.daysSinceStart(value.date);
       var pos  = self.coordForTime(days, value.date.getHours(), 160);
@@ -192,7 +247,6 @@ var Chart = function(name, title) {
 
       self.context.fillRect(pos[0]-Settings.day_w/2, pos[1]-Settings.hour_h/2, Settings.day_w, Settings.hour_h);
     });
-    self.context.globalAlpha = 1.0;
   };
 
   this.drawSummaries = function(summaries, factor) {
@@ -215,13 +269,11 @@ var Chart = function(name, title) {
 
       this.context.strokeStyle = "#3333ff";
       this.context.fillStyle = "#3333ff";
-      this.context.lineWidth = 0.5;
-      this.context.globalAlpha = 0.5;
+      this.context.lineWidth = 0.7;
       this.context.beginPath();
       this.context.moveTo(pos[0] + 2, pos[1] + annotation.pos * 12);
-      this.context.lineTo(pos[0] + 2, 40);
+      this.context.lineTo(pos[0] + 2, 160);
       this.context.stroke();
-      this.context.globalAlpha = 1.0;
       this.context.font = "10px Helvetica";
       this.context.fillText(annotation.text, pos[0] + 5, pos[1] + annotation.pos * 12);
       this.context.strokeStyle = "#000";

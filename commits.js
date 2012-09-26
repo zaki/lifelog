@@ -53,6 +53,14 @@ window.onload = function() {
   }
   //{{{ - Data loading
   function loadAnnotations() {
+    d3.csv("http://rody.dev/data/holiday", function(posts) {
+      posts.forEach(function(post, index) {
+        post.index = index;
+        post.date  = new Date(post.date);
+      });
+
+      window.holidays = posts;
+    });
     d3.csv("http://rody.dev/data/annotations", function(posts) {
       posts.forEach(function(post, index) {
         post.index = index;
