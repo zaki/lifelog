@@ -61,7 +61,7 @@ window.onload = function() {
 
       window.holidays = posts;
     });
-    d3.csv("http://rody.dev/data/annotations", function(posts) {
+    d3.csv("data/annotation-data.csv", function(posts) {
       posts.forEach(function(post, index) {
         post.index = index;
         post.date  = new Date(post.date);
